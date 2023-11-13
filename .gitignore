@@ -128,3 +128,10 @@ dist
 .yarn/build-state.yml
 .yarn/install-state.gz
 .pnp.*
+
+# Hardhat
+artifacts
+cache
+
+# macOS
+.DS_Store
