@@ -44,4 +44,25 @@ describe('Twitter', () => {
       twitter.connect(otherAccount).editTweet(0, 'Edited tweet'),
     ).to.be.revertedWith('You are not the author of this tweet');
   });
+
+  it('should not be able to edit a tweet that has been deleted', async () => {
+    await twitter.connect(owner).deleteTweet(0);
+
+    expect(
+      twitter.connect(owner).editTweet(0, 'Edited tweet'),
+    ).to.be.revertedWith('This tweet has been deleted');
+  });
+
+  it('should be able to delete one of their own tweets', async () => {
+    await twitter.connect(owner).deleteTweet(0);
+    const tweets = await twitter.getTweets();
+
+    expect(tweets.length).to.equal(0);
+  });
+
+  it("should not be able to delete someone else's tweet", async () => {
+    await expect(
+      twitter.connect(otherAccount).deleteTweet(0),
+    ).to.be.revertedWith('You are not the author of this tweet');
+  });
 });

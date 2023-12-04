@@ -7,6 +7,7 @@ contract Twitter {
     address author;
     string content;
     uint timestamp;
+    bool isDeleted;
   }
 
   Tweet[] public tweets;
@@ -19,12 +20,19 @@ contract Twitter {
     _;
   }
 
+  modifier notDeleted(uint _id) {
+    require(!tweets[_id].isDeleted, 'This tweet has been deleted');
+    _;
+  }
+
   /**
    * A function to create a tweet
    * @param _content The content of the tweet
    */
   function createTweet(string memory _content) external {
-    tweets.push(Tweet(tweets.length, msg.sender, _content, block.timestamp));
+    tweets.push(
+      Tweet(tweets.length, msg.sender, _content, block.timestamp, false)
+    );
   }
 
   /**
@@ -32,7 +40,25 @@ contract Twitter {
    * @return Tweet[] An array of all the tweets
    */
   function getTweets() external view returns (Tweet[] memory) {
-    return tweets;
+    uint numberOfNotDeletedTweets = 0;
+
+    for (uint i = 0; i < tweets.length; i++) {
+      if (!tweets[i].isDeleted) {
+        numberOfNotDeletedTweets++;
+      }
+    }
+
+    Tweet[] memory _tweets = new Tweet[](numberOfNotDeletedTweets);
+    uint j = 0;
+
+    for (uint i = 0; i < tweets.length; i++) {
+      if (!tweets[i].isDeleted) {
+        _tweets[j] = tweets[i];
+        j++;
+      }
+    }
+
+    return _tweets;
   }
 
   /**
@@ -43,7 +69,15 @@ contract Twitter {
   function editTweet(
     uint _id,
     string memory _newContent
-  ) external onlyAuthor(_id) {
+  ) external onlyAuthor(_id) notDeleted(_id) {
     tweets[_id].content = _newContent;
+  }
+
+  /**
+   * A function that allows a user to delete their own tweet
+   * @param _id The id of the tweet to delete
+   */
+  function deleteTweet(uint _id) external onlyAuthor(_id) notDeleted(_id) {
+    tweets[_id].isDeleted = true;
   }
 }
