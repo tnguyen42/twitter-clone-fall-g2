@@ -65,4 +65,22 @@ describe('Twitter', () => {
       twitter.connect(otherAccount).deleteTweet(0),
     ).to.be.revertedWith('You are not the author of this tweet');
   });
+
+  it('should not be able to delete a tweet that has been deleted', async () => {
+    await twitter.connect(owner).deleteTweet(0);
+
+    expect(twitter.connect(owner).deleteTweet(0)).to.be.revertedWith(
+      'This tweet has been deleted',
+    );
+  });
+
+  it('should be able to withdraw the contract balance', async () => {
+    await expect(twitter.connect(owner).withdraw()).not.to.be.reverted;
+  });
+
+  it('should not be able to withdraw if not the owner', async () => {
+    await expect(twitter.connect(otherAccount).withdraw()).to.be.revertedWith(
+      'Ownable: caller is not the owner',
+    );
+  });
 });

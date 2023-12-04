@@ -18,12 +18,13 @@
   "homepage": "https://github.com/tnguyen42/twitter-clone-fall-g2#readme",
   "devDependencies": {
     "@nomicfoundation/hardhat-toolbox": "^3.0.0",
+    "@openzeppelin/contracts": "^4.9.3",
+    "chai": "^4.3.4",
     "eslint": "^8.53.0",
     "eslint-config-airbnb-base": "^15.0.0",
     "eslint-plugin-import": "^2.29.0",
     "hardhat": "^2.19.0",
-    "prettier": "3.1.0",
     "mocha": "^10.2.0",
-    "chai": "^4.3.4"
+    "prettier": "3.1.0"
   }
 }

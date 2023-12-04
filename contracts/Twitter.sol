@@ -1,7 +1,9 @@
 // SPDX-License-Identifier: MIT
 pragma solidity >=0.8.0 <0.9.0;
 
-contract Twitter {
+import { Ownable } from '@openzeppelin/contracts/access/Ownable.sol';
+
+contract Twitter is Ownable {
   struct Tweet {
     uint id;
     address author;
@@ -23,6 +25,15 @@ contract Twitter {
   modifier notDeleted(uint _id) {
     require(!tweets[_id].isDeleted, 'This tweet has been deleted');
     _;
+  }
+
+  /**
+   * A function that allows the owner of the contract to withdraw the balance
+   */
+  function withdraw() external onlyOwner {
+    address payable _owner = payable(owner());
+
+    _owner.transfer(address(this).balance);
   }
 
   /**
